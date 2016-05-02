@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using static System.Math;
 
 namespace NumberTheory
@@ -7,13 +8,12 @@ namespace NumberTheory
     {
         private List<ulong> fPrimeFactors;
 
-        public bool isPrime(ulong number)
+        public bool IsPrime(ulong number)
         {
             for (ulong i = 2; i <= Floor(Sqrt(number)); i++)
             {
                 return !(number % i == 0);
             }
-
             return true; 
         }
 
@@ -21,7 +21,7 @@ namespace NumberTheory
         {
             for (ulong i = number; i > 2; i--)
             {
-                if (isPrime(i))
+                if (IsPrime(i))
                 {
                     return i;
                 }
