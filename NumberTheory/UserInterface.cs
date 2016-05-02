@@ -1,21 +1,24 @@
-﻿using NumberTheory;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NumberTheory
 {
     public class UserInterface
     {
+        readonly Analysis fAnalysis;
+        readonly MethodTimerWrapper fMethodTimerWrapper;
+
+        public UserInterface()
+        {
+            fAnalysis = new Analysis();
+            fMethodTimerWrapper = new MethodTimerWrapper();
+        }
+
         public void UserMenu()
         {
             Analysis analysis = new Analysis();
-            Stopwatch stopwatch = new Stopwatch();
-
-            int userChoice;
+            
+            int menuChoice;
             do
             {
                 Console.Clear();
@@ -23,47 +26,58 @@ namespace NumberTheory
                 Console.WriteLine("2. Return the list of prime factors for an integer");
                 Console.WriteLine("3. Return the largest prime number smaller or equal to an integer");
                 Console.WriteLine("4. Exit application");
-                Console.Write("Pick your choice");               
-            } while (!(Int32.TryParse(Console.ReadLine(), out userChoice) && userChoice >= 1 && userChoice <= 4));
+                Console.Write("{0}Pick your choice: ", Environment.NewLine);               
+            } while (!(Int32.TryParse(Console.ReadLine(), out menuChoice) && menuChoice >= 1 && menuChoice <= 4));
 
+            if (menuChoice == 4)
+            {
+                return;
+            }
 
-            ulong userInput;
+            ulong integerInput;
             do
             {
-                Console.WriteLine("Please enter a positive integer between 2 and 18,446,744,073,709,551,615");
-            } while (!(UInt64.TryParse(Console.ReadLine(), out userInput) && userInput >= 2));
+                Console.Write("{0}Please enter a positive integer between 2 and 18,446,744,073,709,551,615: ", Environment.NewLine);
+            } while (!(UInt64.TryParse(Console.ReadLine(), out integerInput) && integerInput >= 2));
 
-            stopwatch.Start();
-            switch(userChoice)
-            {
+            Console.WriteLine();
+            ProcessUserChoice(integerInput, menuChoice);                      
+        }
+
+        private void ProcessUserChoice(ulong integerInput, int menuChoice)
+        {          
+            switch (menuChoice)
+            {               
                 case 1:
-                   
-                    if(analysis.IsPrime(userInput))
+                    if (fMethodTimerWrapper.ExecuteMethod(fAnalysis.IsPrime, integerInput))
                     {
-                        Console.WriteLine("{0} is a prime number", userChoice);
+                        Console.WriteLine("{0} is a prime number", integerInput);
                     }
                     else
                     {
-                        Console.WriteLine("{0} is not a prime number", userChoice);
-                    }                                         
-                    break;
-
-                case 2:
-                    MethodTimerWrapper<List<ulong>> methodTimer = new MethodTimerWrapper<List<ulong>>(analysis.CalculatePrimeFactors, userInput);
-                    List<ulong> primeFactors = methodTimer.MethodResult;
-                    //List<ulong> primeFactors = analysis.CalculatePrimeFactors(userInput);
-                    foreach (ulong primeNumber in primeFactors)
-                    {
-                        Console.WriteLine(primeNumber);
+                        Console.WriteLine("{0} is not a prime number", integerInput);
                     }
                     break;
 
+                case 2:
+                    List<ulong> primeFactors = fMethodTimerWrapper.ExecuteMethod(fAnalysis.CalculatePrimeFactors, integerInput);
+                    Console.WriteLine("The prime factors for {0} are :", integerInput);
+                    foreach (ulong primeNumber in primeFactors)
+                    {
+                        Console.Write(primeNumber + " ");
+                    }
+                    Console.WriteLine();
+                    break;
+
+                case 3:
+                    Console.WriteLine("The largest prime that is smaller than {0} is {1}.", integerInput, fMethodTimerWrapper.ExecuteMethod(fAnalysis.CalculateLargestPrime, integerInput));
+                    break;
             }
-            stopwatch.Stop();
-            
-            Console.WriteLine("The calculation lasted {0} secondes", stopwatch.Elapsed);
-        
+
+            Console.WriteLine("{0}The calculation lasted {1} seconds", Environment.NewLine, fMethodTimerWrapper.MethodExecutionTime);
+            Console.WriteLine("Press any key to continue");
             Console.ReadLine();
+            UserMenu();
         }
     }
 }

@@ -1,14 +1,30 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace NumberTheory
 {
-    public class MethodTimerWrapper<T>
+    public class MethodTimerWrapper
     {
-        public MethodTimerWrapper(Func<ulong, T> method, ulong number)
+        private readonly Stopwatch fStopWatch;
+        private TimeSpan fTimeforCalculation;
+
+        public MethodTimerWrapper()
         {
-            MethodResult = method(number);
+            fStopWatch = new Stopwatch();
+        }
+      
+        public TimeSpan MethodExecutionTime
+        {
+            get { return fTimeforCalculation; }
         }
 
-        public T MethodResult { get; set; }
+        public T ExecuteMethod<T>(Func<ulong, T> method, ulong number)
+        {           
+            fStopWatch.Start();
+            T result = method(number);
+            fStopWatch.Stop();
+            fTimeforCalculation = fStopWatch.Elapsed;
+            return result;
+        }
     }
 }

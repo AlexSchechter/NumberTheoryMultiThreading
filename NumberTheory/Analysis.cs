@@ -9,10 +9,13 @@ namespace NumberTheory
         private List<ulong> fPrimeFactors;
 
         public bool IsPrime(ulong number)
-        {
+        {          
             for (ulong i = 2; i <= Floor(Sqrt(number)); i++)
             {
-                return !(number % i == 0);
+                if(number % i == 0)
+                {
+                    return false;
+                }               
             }
             return true; 
         }
