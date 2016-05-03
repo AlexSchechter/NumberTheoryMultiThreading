@@ -16,8 +16,6 @@ namespace NumberTheory
 
         public void UserMenu()
         {
-            Analysis analysis = new Analysis();
-            
             int menuChoice;
             do
             {
