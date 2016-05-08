@@ -1,14 +1,15 @@
 ﻿using NUnit.Framework;
 using NumberTheory;
 using System;
-//using static Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo.Create;
+using System.Threading;
 
 namespace NumberTheoryTest
 {
     [TestFixture]
     public class MethodTimerWrapperTest
     {
-        private MethodTimerWrapper fMethodTimerWrapper;
+        private MethodTimerWrapper<double> ftestMethodTimerWrapper;
+        private const double methodExecutionTimeBoundary = 0.001;
 
         [Test]
         public void ExecuteMethodReturnsCorrectResultForGivenMethodAndInput()
@@ -17,24 +18,38 @@ namespace NumberTheoryTest
             ReturnsCorrectMethodResult();
         }
 
-        private double TestMethod(ulong number)
+        [Test]
+        public void ExecuteMethodSetsMethodExcecutionTimePropertyCorrectly()
         {
-            return Math.Sqrt(number);
-        }          
-             
-        private void GivenMethodTimerWrapper()
-        {
-            fMethodTimerWrapper = new MethodTimerWrapper();
+            GivenMethodTimerWrapper();
+            WhenExecuteFunctionIsCalled();
+            ReturnsCorrectMethodExecutionTime();
         }
 
-        private void WhenExecuteFunctionIsCalledWith<T>(Func<ulong, T> function, ulong number)
+        private double TestMethodResult(ulong number)
         {
-            fMethodTimerWrapper.ExecuteMethod<T>(function, number);
+            Thread.Sleep(1000);
+            return Math.Sqrt(number);
+        }
+        
+        private void GivenMethodTimerWrapper()
+        {
+            ftestMethodTimerWrapper = new MethodTimerWrapper<double>(TestMethodResult, 16);
+        }
+
+        private void WhenExecuteFunctionIsCalled()
+        {
+            ftestMethodTimerWrapper.ExecuteMethod();          
         }
 
         private void ReturnsCorrectMethodResult()
         {
-            Assert.AreEqual(Math.Sqrt(30), fMethodTimerWrapper.ExecuteMethod<double>(TestMethod, 30));
+            Assert.AreEqual(4, ftestMethodTimerWrapper.ExecuteMethod());
+        }     
+        
+        private void ReturnsCorrectMethodExecutionTime()
+        {
+            Assert.That(1, Is.EqualTo(ftestMethodTimerWrapper.MethodExecutionTime.TotalSeconds).Within(methodExecutionTimeBoundary));
         }
     }
 }
