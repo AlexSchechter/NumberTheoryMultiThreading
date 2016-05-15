@@ -7,10 +7,12 @@ namespace NumberTheory
     public class UserInterface
     {
         readonly Analysis fAnalysis;
+        readonly MultiThreadingAnalysis fParallelAnalysis;
 
         public UserInterface()
         {
-            fAnalysis = new Analysis();          
+            fAnalysis = new Analysis();
+            fParallelAnalysis = new MultiThreadingAnalysis();    
         }
 
         public void UserMenu()
@@ -72,8 +74,11 @@ namespace NumberTheory
 
                 case 3:
                     MethodTimerWrapper<ulong> calculateLargestPrimeWrapper = new MethodTimerWrapper<ulong>(fAnalysis.CalculateLargestPrime, integerInput);
+                    MethodTimerWrapper<ulong> calculateLargestPrimeWrapperParallel = new MethodTimerWrapper<ulong>(fParallelAnalysis.CalculateLargestPrime, integerInput);
                     Console.WriteLine("The largest prime that is smaller than {0} is {1}.", integerInput, calculateLargestPrimeWrapper.ExecuteMethod());
-                    Console.WriteLine("{0}The calculation lasted {1} seconds", Environment.NewLine, calculateLargestPrimeWrapper.MethodExecutionTime);
+                    Console.WriteLine("The largest prime that is smaller than {0} is {1}.", integerInput, calculateLargestPrimeWrapperParallel.ExecuteMethod());
+                    Console.WriteLine("{0}The calculation lasted {1} seconds in the sequential calculation", Environment.NewLine, calculateLargestPrimeWrapper.MethodExecutionTime);
+                    Console.WriteLine("{0}The calculation lasted {1} seconds in the parallel calculation", Environment.NewLine, calculateLargestPrimeWrapperParallel.MethodExecutionTime);
                     break;
             }
           
