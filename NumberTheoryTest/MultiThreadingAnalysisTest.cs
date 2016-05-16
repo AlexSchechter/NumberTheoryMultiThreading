@@ -1,13 +1,17 @@
 ﻿using NumberTheory;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NumberTheoryTest
 {
     [TestFixture]
-    public class AnalysisTest
+    public class MultiThreadingAnalysisTest
     {
-        private Analysis fAnalysis;
+        private MultiThreadingAnalysis fAnalysis;
 
         [TestCase((ulong)0, false)]
         [TestCase((ulong)1, true)]
@@ -43,7 +47,7 @@ namespace NumberTheoryTest
 
         private void GivenAnalysisClass()
         {
-            fAnalysis = new Analysis();
+            fAnalysis = new MultiThreadingAnalysis();
         }
 
         private void ThenItKnowsIfPrime(ulong inputValue, bool expectedResult)

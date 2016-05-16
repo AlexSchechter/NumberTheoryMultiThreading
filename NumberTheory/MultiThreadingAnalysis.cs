@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using static System.Math;
 
 namespace NumberTheory
 {
     public class MultiThreadingAnalysis
     {
-        private bool fPrimeFound;
+        private bool fAnswerFound;
         private List<ulong> fAllPrimesFound;
-        private ulong fNextNumberToCheck = 20;
+        private ulong fNextNumberToCheck;
         private object fLock = new object();
 
         public bool IsPrime(ulong number)
@@ -39,9 +37,14 @@ namespace NumberTheory
 
         public ulong CalculateLargestPrime(ulong number)
         {
+            if (number < 4)
+            {
+                return number;
+            }
+                
             fNextNumberToCheck = number;
             List<Thread> threads = new List<Thread>();
-            fPrimeFound = false;
+            fAnswerFound = false;
             fAllPrimesFound = new List<ulong>();
 
             for (int i = 0; i < Environment.ProcessorCount; i++)
@@ -56,13 +59,13 @@ namespace NumberTheory
                 thread.Join();
             }
 
-            return fPrimeFound == false ? number : fAllPrimesFound.Max();
+            return fAnswerFound == false ? number : fAllPrimesFound.Max();
         }
 
         private void CalculateLargestPrimeThread()
         {
             ulong candidate;
-            while (!fPrimeFound)
+            while (!fAnswerFound)
             {
                 Monitor.Enter(fLock);               
                 candidate = fNextNumberToCheck;
@@ -70,13 +73,13 @@ namespace NumberTheory
                 Monitor.Exit(fLock);
 
                 if (candidate < 2)
-                {
+                {                  
                     break;
                 }
 
                 if (IsPrime(candidate))
                 {
-                    fPrimeFound = true;
+                    fAnswerFound = true;
                     fAllPrimesFound.Add(candidate);
                 }
             }

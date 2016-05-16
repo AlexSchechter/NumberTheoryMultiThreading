@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="AnalysisTest.cs" />
     <Compile Include="MethodTimerWrapperTest.cs" />
+    <Compile Include="MultiThreadingAnalysisTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
